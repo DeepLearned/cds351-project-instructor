@@ -5,7 +5,8 @@ FFLAGS  = -std=f2018 -Wall -Wextra -fcheck=all -g \
 
 TARGET  = bin/main.x
 
-OBJECTS = build/statistics_mod.o \
+OBJECTS = build/dataset_mod.o \
+	  build/statistics_mod.o \
           build/io_mod.o \
           build/main.o
 .PHONY: all run clean dirs
@@ -18,14 +19,17 @@ dirs:
 $(TARGET): $(OBJECTS)
 	$(FC) $(OBJECTS) -o $@
 
+build/dataset_mod.o: src/dataset_mod.f90 | dirs
+	$(FC) $(FFLAGS) -c $< -o $@
+
 build/statistics_mod.o: src/statistics_mod.f90 | dirs
 	$(FC) $(FFLAGS) -c $< -o $@
 
 build/io_mod.o: src/io_mod.f90 | dirs
 	$(FC) $(FFLAGS) -c $< -o $@
 
-build/main.o: src/main.f90 build/statistics_mod.o \
-              build/io_mod.o | dirs
+build/main.o: src/main.f90 build/dataset_mod.o \
+	      build/statistics_mod.o build/io_mod.o | dirs
 	$(FC) $(FFLAGS) -c $< -o $@
 
 run: all

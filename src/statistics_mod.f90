@@ -1,10 +1,21 @@
 module stats_mod
+    use dataset_mod, only: dataset_t, summary_stats_t
     implicit none
     private
-    public :: mean_from_total
-    public :: summarize
+    public :: summarize_dataset
     
 contains
+
+    function summarize_dataset(obs) result(summary)
+        type(dataset_t), intent(in) :: obs
+        type(summary_stats_t) :: summary
+        call summarize(obs%values, obs%missing_value, &
+            summary%total, summary%minimum, &
+            summary%maximum, summary%nvalid)
+        summary%mean = mean_from_total(summary%total, &
+            summary%nvalid, &
+            obs%missing_value)
+    end function summarize_dataset
     
     pure function mean_from_total(total, nvalid, missing_value) result(mean)
         implicit none
